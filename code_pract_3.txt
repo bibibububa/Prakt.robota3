@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Перевірка, чи передано аргумент
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 <filename>"
+  exit 1
+fi
+
+input_file=$1
+
+# Перевірка, чи існує файл
+if [ ! -f "$input_file" ]; then
+  echo "File not found!"
+  exit 1
+fi
+
+# Створення піддиректорій і запис рядків у файли
+while IFS= read -r line || [[ -n "$line" ]]; do
+  first_char=$(echo "$line" | head -c 1)
+  dir="$first_char"
+
+  # Перевірка чи перший символ не є спеціальним символом (наприклад, пробіл)
+  if [[ ! "$first_char" =~ [A-Za-z0-9] ]]; then
+    dir="special_characters"
+  fi
+
+  mkdir -p "$dir"
+
+  # Запис рядка в файл, названий відповідно до директорії
+  echo "$line" >> "$dir/$dir.txt"
+done < "$input_file"
